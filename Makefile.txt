@@ -1,0 +1,26 @@
+CXX = g++
+CXXFLAGS = -std=c++11 -Wall -Iinclude -I/usr/include/qt -I/usr/include/qt/QtCore -I/usr/include/qt/QtGui -I/usr/include/qt/QtWidgets
+
+# List your source files
+SOURCES = src/file_operations.cpp src/main.cpp src/mainwindow.cpp
+
+# Generate object file names from source files
+OBJECTS = $(SOURCES:.cpp=.o)
+
+# Specify the output executable name
+EXECUTABLE = ProFileX
+
+all: $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	mkdir -p build
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o build/$(EXECUTABLE) -lQt5Core -lQt5Gui -lQt5Widgets
+
+# Rule for compiling each .cpp file to a .o object file
+%.o: %.cpp
+	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+clean:
+	rm -rf build *.o
+
+.PHONY: all clean
