@@ -1,0 +1,15 @@
+project/
+├── README.md          # Project documentation
+├── Makefile           # Make configuration file
+├── src/               # Source code directory
+│   ├── main.cpp       # Main entry point
+│   ├── gui.h          # GUI header
+│   ├── gui.cpp        # GUI implementation
+│   ├── file_operations.h  # File operations header
+│   ├── file_operations.cpp  # File operations implementation
+│   └── utils.cpp      # Utilities implementation
+├── include/           # Header files directory
+│   └── utils.h        # Utilities header
+├── ui/                # UI files directory
+│   └── mainwindow.ui  # Main window UI design file
+└── build/             # Build directory
