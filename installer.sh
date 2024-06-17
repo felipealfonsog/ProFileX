@@ -2,36 +2,39 @@
 
 # Installer for ProFileX on Linux systems
 
-# Define paths and file names
+# Define variables
 INSTALL_DIR="/usr/local/bin"
-EXECUTABLE_NAME="profilex"
-SOURCE_FILE_URL="https://raw.githubusercontent.com/felipealfonsog/ProFileX/main/src/main.cpp"
+EXECUTABLE_NAME="proFileX"
+SOURCE_URL="https://github.com/felipealfonsog/ProFileX/archive/refs/tags/v0.0.2.tar.gz"
+TMP_DIR=$(mktemp -d)
+SOURCE_DIR="$TMP_DIR/ProFileX-0.0.2"
 
-# Download the source file
-echo "Downloading the source file..."
-wget -O "$SOURCE_FILE.cpp" "$SOURCE_FILE_URL"
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to download the source file."
+# Function to display error and exit
+error_exit() {
+    echo "Error: $1"
+    rm -rf "$TMP_DIR"
     exit 1
-fi
+}
 
-# Compile the program
-echo "Compiling the program..."
-gcc -o "$EXECUTABLE_NAME" "$EXECUTABLE_NAME.cpp"
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to compile the program."
-    exit 1
-fi
+# Download source archive
+echo "Downloading ProFileX source code..."
+wget -q --show-progress -O "$TMP_DIR/proFileX.tar.gz" "$SOURCE_URL" || error_exit "Failed to download ProFileX source code."
 
-# Move the executable to the installation directory
-echo "Installing the program to $INSTALL_DIR..."
-sudo mv "$EXECUTABLE_NAME" "$INSTALL_DIR"
-if [ $? -ne 0 ]; then
-    echo "Error: Failed to move the executable to $INSTALL_DIR."
-    exit 1
-fi
+# Extract source archive
+echo "Extracting source code..."
+tar -xf "$TMP_DIR/proFileX.tar.gz" -C "$TMP_DIR" || error_exit "Failed to extract source code."
 
-# Clean up temporary files
-rm -f "$EXECUTABLE_NAME.cpp"
+# Build ProFileX
+echo "Building ProFileX..."
+cd "$SOURCE_DIR" || error_exit "Source directory not found."
+qmake proFileX.pro || error_exit "Failed to run qmake."
+make || error_exit "Failed to build ProFileX."
+
+# Install ProFileX executable
+echo "Installing ProFileX to $INSTALL_DIR..."
+sudo install -m 755 "$SOURCE_DIR/build/proFileX" "$INSTALL_DIR" || error_exit "Failed to install ProFileX."
+
+# Clean up
+rm -rf "$TMP_DIR"
 
 echo "ProFileX has been successfully installed to $INSTALL_DIR."
