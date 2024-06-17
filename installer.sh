@@ -1,0 +1,37 @@
+#!/bin/bash
+
+# Installer for ProFileX on Linux systems
+
+# Define paths and file names
+INSTALL_DIR="/usr/local/bin"
+EXECUTABLE_NAME="profilex"
+SOURCE_FILE_URL="https://raw.githubusercontent.com/felipealfonsog/ProFileX/main/src/main.cpp"
+
+# Download the source file
+echo "Downloading the source file..."
+wget -O "$SOURCE_FILE.cpp" "$SOURCE_FILE_URL"
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to download the source file."
+    exit 1
+fi
+
+# Compile the program
+echo "Compiling the program..."
+gcc -o "$EXECUTABLE_NAME" "$EXECUTABLE_NAME.cpp"
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to compile the program."
+    exit 1
+fi
+
+# Move the executable to the installation directory
+echo "Installing the program to $INSTALL_DIR..."
+sudo mv "$EXECUTABLE_NAME" "$INSTALL_DIR"
+if [ $? -ne 0 ]; then
+    echo "Error: Failed to move the executable to $INSTALL_DIR."
+    exit 1
+fi
+
+# Clean up temporary files
+rm -f "$EXECUTABLE_NAME.cpp"
+
+echo "ProFileX has been successfully installed to $INSTALL_DIR."
