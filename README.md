@@ -1,4 +1,4 @@
-### ProFileX (Experimental project)
+### ProFileX [(Experimental Project)](#important-experimental-project)* 
 ProFileX is a Linux file management tool with a Qt-based GUI. It allows users to list, create, and delete files easily, providing an intuitive interface for efficient file operations.
 
 ProFileX is an advanced file management tool designed for Linux systems, featuring a user-friendly Qt-based graphical interface. With ProFileX, users can effortlessly navigate, manipulate, and organize files and directories with ease. The application offers robust functionalities such as file listing, creation, deletion, and seamless navigation through directories. Its intuitive design ensures efficient file operations, catering to both novice and advanced users alike. ProFileX prioritizes simplicity and efficiency, making it an essential tool for anyone seeking a lightweight and powerful file manager on Linux.
@@ -127,6 +127,15 @@ If you want to update the program in your system, download the bash and re-run t
 Please note that if you encounter any issues or have suggestions, feel free to raise an issue on the [ProFileX repository](https://github.com/felipealfonsog/ProFileX/issues). Your feedback is invaluable!
 
 Thank you for joining me on this journey, and I hope it brings value to your life and workflow. Let's continue making technology accessible and enjoyable for everyone!
+
+#
+
+#### 📝Important (Experimental Project)
+
+[![Experimental Project](https://img.shields.io/badge/Project-Type%3A%20Experimental-blueviolet)](#)
+
+This project is still in its experimental stage and may have limitations in terms of features and compatibility. Use at your own discretion.
+
 
 
 #
