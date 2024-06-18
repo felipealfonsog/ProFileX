@@ -1,12 +1,32 @@
-TEMPLATE = app
-TARGET = proFileX
-INCLUDEPATH += include
-QT += core gui widgets
+QT += widgets
 
-SOURCES += src/main.cpp \
-           src/file_operations.cpp
+# Optional: Add other required modules if not already present
+# QT += core gui
 
-HEADERS += include/main.h \
-           include/file_operations.h
+# Include necessary headers
+HEADERS += \
+    include/file_operations.h \
+    include/main.h \
+    include/utils.h
 
-FORMS += ui/mainwindow.ui
+# Source files
+SOURCES += \
+    src/file_operations.cpp \
+    src/main.cpp \
+    src/utils.cpp
+
+# UI files
+FORMS += \
+    ui/mainwindow.ui
+
+# Resources (if any)
+RESOURCES +=
+
+# Precompiled headers (if used)
+PRECOMPILED_HEADER =
+
+# Additional compiler flags (if needed)
+QMAKE_CXXFLAGS +=
+
+# Additional linker flags (if needed)
+QMAKE_LFLAGS +=
