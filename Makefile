@@ -17,7 +17,7 @@ CXX           = g++
 DEFINES       = -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -O2 -flto -fno-fat-lto-objects -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -O2 -flto -fno-fat-lto-objects -Wall -Wextra -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -Iinclude -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I. -I. -I/usr/lib/qt/mkspecs/linux-g++
+INCPATH       = -I. -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I. -I. -I/usr/lib/qt/mkspecs/linux-g++
 QMAKE         = /usr/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -52,10 +52,12 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = src/main.cpp \
-		src/file_operations.cpp moc_main.cpp
-OBJECTS       = main.o \
-		file_operations.o \
+SOURCES       = src/file_operations.cpp \
+		src/main.cpp \
+		src/utils.cpp moc_main.cpp
+OBJECTS       = file_operations.o \
+		main.o \
+		utils.o \
 		moc_main.o
 DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/common/unix.conf \
@@ -184,9 +186,11 @@ DIST          = /usr/lib/qt/mkspecs/features/spec_pre.prf \
 		/usr/lib/qt/mkspecs/features/exceptions.prf \
 		/usr/lib/qt/mkspecs/features/yacc.prf \
 		/usr/lib/qt/mkspecs/features/lex.prf \
-		proFileX.pro include/main.h \
-		include/file_operations.h src/main.cpp \
-		src/file_operations.cpp
+		proFileX.pro include/file_operations.h \
+		include/main.h \
+		include/utils.h src/file_operations.cpp \
+		src/main.cpp \
+		src/utils.cpp
 QMAKE_TARGET  = proFileX
 DESTDIR       = 
 TARGET        = proFileX
@@ -470,8 +474,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents /usr/lib/qt/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents include/main.h include/file_operations.h $(DISTDIR)/
-	$(COPY_FILE) --parents src/main.cpp src/file_operations.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents include/file_operations.h include/main.h include/utils.h $(DISTDIR)/
+	$(COPY_FILE) --parents src/file_operations.cpp src/main.cpp src/utils.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents ui/mainwindow.ui $(DISTDIR)/
 
 
@@ -510,7 +514,7 @@ compiler_moc_header_clean:
 moc_main.cpp: include/main.h \
 		moc_predefs.h \
 		/usr/bin/moc
-	/usr/bin/moc $(DEFINES) --include /home/felipe/Development/ProFileX/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/felipe/Development/ProFileX -I/home/felipe/Development/ProFileX/include -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/14.1.1 -I/usr/include/c++/14.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/14.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include-fixed -I/usr/include include/main.h -o moc_main.cpp
+	/usr/bin/moc $(DEFINES) --include /home/felipe/Development/ProFileX/moc_predefs.h -I/usr/lib/qt/mkspecs/linux-g++ -I/home/felipe/Development/ProFileX -I/usr/include/qt -I/usr/include/qt/QtWidgets -I/usr/include/qt/QtGui -I/usr/include/qt/QtCore -I/usr/include/c++/14.1.1 -I/usr/include/c++/14.1.1/x86_64-pc-linux-gnu -I/usr/include/c++/14.1.1/backward -I/usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include -I/usr/local/include -I/usr/lib/gcc/x86_64-pc-linux-gnu/14.1.1/include-fixed -I/usr/include include/main.h -o moc_main.cpp
 
 compiler_moc_objc_header_make_all:
 compiler_moc_objc_header_clean:
@@ -533,12 +537,14 @@ compiler_clean: compiler_moc_predefs_clean compiler_moc_header_clean compiler_ui
 
 ####### Compile
 
-main.o: src/main.cpp include/main.h \
-		ui_mainwindow.h
+file_operations.o: src/file_operations.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o file_operations.o src/file_operations.cpp
+
+main.o: src/main.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o src/main.cpp
 
-file_operations.o: src/file_operations.cpp src/file_operations.h
-	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o file_operations.o src/file_operations.cpp
+utils.o: src/utils.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o utils.o src/utils.cpp
 
 moc_main.o: moc_main.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_main.o moc_main.cpp

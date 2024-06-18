@@ -1,46 +1,95 @@
 #include <QApplication>
+#include <QMainWindow>
+#include <QTreeWidget>
+#include <QPlainTextEdit>
+#include <QAction>
 #include <QFileDialog>
-#include "main.h"
+#include <QMessageBox>
+#include <QDir>
+#include <QFile>
+#include <QTreeWidgetItem>
+#include <QVBoxLayout>
+#include <QTextStream>
+
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
-    return a.exec();
-}
+    QApplication app(argc, argv);
 
-// Implementation of MainWindow constructor and methods
+    QMainWindow mainWindow;
+    QWidget *centralWidget = new QWidget(&mainWindow);
+    mainWindow.setCentralWidget(centralWidget);
 
-#include "ui_mainwindow.h"
+    QVBoxLayout *layout = new QVBoxLayout(centralWidget);
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::MainWindow)
-{
-    ui->setupUi(this);
+    // Create QTreeWidget
+    QTreeWidget *treeWidget = new QTreeWidget();
+    treeWidget->setHeaderLabels(QStringList() << "Name" << "Type");
+    layout->addWidget(treeWidget);
 
-    openFileButton = new QPushButton("Open File", this);
-    mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(openFileButton);
+    // Create QPlainTextEdit
+    QPlainTextEdit *plainTextEdit = new QPlainTextEdit();
+    layout->addWidget(plainTextEdit);
 
-    QWidget *centralWidget = new QWidget(this);
-    centralWidget->setLayout(mainLayout);
-    setCentralWidget(centralWidget);
+    // Create actions (for demonstration)
+    QAction *listFilesAction = new QAction("List Files", &mainWindow);
+    QAction *openFileAction = new QAction("Open File", &mainWindow);
+    QAction *deleteFileAction = new QAction("Delete File", &mainWindow);
+    QAction *createFileAction = new QAction("Create File", &mainWindow);
+    QAction *createDirAction = new QAction("Create Directory", &mainWindow);
 
-    connect(openFileButton, &QPushButton::clicked, this, &MainWindow::onOpenFileClicked);
-}
+    // Connect actions to slots (for demonstration)
+    QObject::connect(listFilesAction, &QAction::triggered, [&]() {
+        // Clear existing items in QTreeWidget
+        treeWidget->clear();
 
-MainWindow::~MainWindow()
-{
-    delete ui;
-}
+        // List files in home directory
+        QDir homeDir = QDir::home();
+        QFileInfoList fileList = homeDir.entryInfoList(QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot);
 
-void MainWindow::onOpenFileClicked()
-{
-    QString homeDirectory = QDir::homePath();
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"), homeDirectory);
+        // Populate QTreeWidget with files and directories
+        foreach (QFileInfo fileInfo, fileList) {
+            QTreeWidgetItem *item = new QTreeWidgetItem(treeWidget);
+            item->setText(0, fileInfo.fileName());
+            item->setText(1, fileInfo.isDir() ? "Directory" : "File");
+            item->setToolTip(0, fileInfo.absoluteFilePath());
+            // Set icon based on type (ASCII icons)
+            item->setIcon(0, QIcon(fileInfo.isDir() ? "📁" : "📄"));
+        }
+    });
 
-    if (!fileName.isEmpty()) {
-        // Aquí puedes agregar la lógica para manejar el archivo seleccionado
-    }
+    QObject::connect(openFileAction, &QAction::triggered, [&]() {
+        // Get selected item from QTreeWidget
+        QTreeWidgetItem *selectedItem = treeWidget->currentItem();
+        if (!selectedItem) {
+            QMessageBox::warning(&mainWindow, "Error", "No file selected.");
+            return;
+        }
+
+        // Get file path from the selected item
+        QString filePath = selectedItem->toolTip(0);
+
+        // Open file for reading
+        QFile file(filePath);
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QTextStream in(&file);
+            plainTextEdit->setPlainText(in.readAll());
+            file.close();
+        } else {
+            QMessageBox::critical(&mainWindow, "Error", "Failed to open file.");
+        }
+    });
+
+    // Add actions to main window
+    mainWindow.addAction(listFilesAction);
+    mainWindow.addAction(openFileAction);
+    mainWindow.addAction(deleteFileAction);
+    mainWindow.addAction(createFileAction);
+    mainWindow.addAction(createDirAction);
+
+    // Set main window size and show
+    mainWindow.resize(800, 600);
+    mainWindow.show();
+
+    return app.exec();
 }
