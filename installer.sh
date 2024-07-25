@@ -9,7 +9,7 @@
 
 # Variables
 pkgname="profilex"
-pkgver="0.0.5"
+pkgver="0.0.6"
 srcdir="/tmp/${pkgname}-${pkgver}"
 source="https://github.com/felipealfonsog/ProFileX/archive/refs/tags/v.${pkgver}.tar.gz"
 bin_path="/usr/local/bin/profilex"
