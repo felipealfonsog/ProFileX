@@ -11,7 +11,7 @@ static void activate(GtkApplication *app, gpointer user_data);
 static void on_back_clicked(GtkButton *button, gpointer user_data);
 static void on_forward_clicked(GtkButton *button, gpointer user_data);
 static void on_home_clicked(GtkButton *button, gpointer user_data);
-static void update_file_manager_view(GtkWidget *window);
+static void update_file_manager_view(GtkWidget *scroll_window, GtkWidget *window);
 
 int main(int argc, char *argv[]) {
     GtkApplication *app;
@@ -31,9 +31,6 @@ static void activate(GtkApplication *app, gpointer user_data) {
     GtkWidget *vbox;
     GtkWidget *toolbar;
     GtkWidget *scroll_window;
-    GtkWidget *file_manager_view;
-
-    g_print("Activating application\n");
 
     window = gtk_application_window_new(app);
     gtk_window_set_title(GTK_WINDOW(window), "ProFileX");
@@ -71,32 +68,55 @@ static void activate(GtkApplication *app, gpointer user_data) {
     gtk_scrolled_window_set_policy(GTK_SCROLLED_WINDOW(scroll_window), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
     gtk_box_pack_start(GTK_BOX(vbox), scroll_window, TRUE, TRUE, 0);
 
-    file_manager_view = create_file_manager_view();
-    gtk_container_add(GTK_CONTAINER(scroll_window), file_manager_view);
-
     if (current_path == NULL) {
         current_path = g_strdup(g_get_home_dir());
     }
 
-    gtk_widget_show_all(window);
+    // Guardar los botones en la ventana
+    g_object_set_data(G_OBJECT(window), "back_button", GTK_WIDGET(back_button));
+    g_object_set_data(G_OBJECT(window), "forward_button", GTK_WIDGET(forward_button));
+    g_object_set_data(G_OBJECT(window), "home_button", GTK_WIDGET(home_button));
+    g_object_set_data(G_OBJECT(window), "scroll_window", GTK_WIDGET(scroll_window));
 
-    g_print("Application activated\n");
+    update_file_manager_view(scroll_window, window);
+
+    gtk_widget_show_all(window);
 }
 
-static void update_file_manager_view(GtkWidget *window) {
-    GtkWidget *scroll_window = gtk_bin_get_child(GTK_BIN(gtk_widget_get_parent(window)));
-    GtkWidget *file_manager_view = create_file_manager_view();
-    
+static void update_file_manager_view(GtkWidget *scroll_window, GtkWidget *window) {
+    GtkWidget *file_manager_view = create_file_manager_view(current_path);
+
     // Elimina los widgets existentes en el contenedor
-    gtk_container_foreach(GTK_CONTAINER(scroll_window), (GtkCallback)gtk_widget_destroy, NULL);
-    
+    GList *children = gtk_container_get_children(GTK_CONTAINER(scroll_window));
+    for (GList *iter = children; iter != NULL; iter = g_list_next(iter)) {
+        gtk_widget_destroy(GTK_WIDGET(iter->data));
+    }
+    g_list_free(children);
+
     // Agrega la nueva vista
     gtk_container_add(GTK_CONTAINER(scroll_window), file_manager_view);
-    gtk_widget_show_all(scroll_window); // Asegúrate de mostrar la ventana de desplazamiento
+    gtk_widget_show_all(scroll_window);
+
+    // Actualizar el estado de los botones
+    GtkWidget *back_button = g_object_get_data(G_OBJECT(window), "back_button");
+    GtkWidget *forward_button = g_object_get_data(G_OBJECT(window), "forward_button");
+
+    if (previous_path) {
+        gtk_widget_set_sensitive(back_button, TRUE);
+    } else {
+        gtk_widget_set_sensitive(back_button, FALSE);
+    }
+
+    if (next_path) {
+        gtk_widget_set_sensitive(forward_button, TRUE);
+    } else {
+        gtk_widget_set_sensitive(forward_button, FALSE);
+    }
 }
 
 static void on_back_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *window = GTK_WIDGET(user_data);
+    GtkWidget *scroll_window = g_object_get_data(G_OBJECT(window), "scroll_window");
 
     g_print("Back button clicked\n");
     if (previous_path) {
@@ -106,7 +126,7 @@ static void on_back_clicked(GtkButton *button, gpointer user_data) {
         current_path = g_strdup(previous_path);
         g_free(previous_path);
         previous_path = NULL; // Restablece previous_path
-        update_file_manager_view(window);
+        update_file_manager_view(scroll_window, window);
     } else {
         g_print("No previous path to navigate to.\n");
     }
@@ -114,6 +134,7 @@ static void on_back_clicked(GtkButton *button, gpointer user_data) {
 
 static void on_forward_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *window = GTK_WIDGET(user_data);
+    GtkWidget *scroll_window = g_object_get_data(G_OBJECT(window), "scroll_window");
 
     g_print("Forward button clicked\n");
     if (next_path) {
@@ -123,7 +144,7 @@ static void on_forward_clicked(GtkButton *button, gpointer user_data) {
         current_path = g_strdup(next_path);
         g_free(next_path);
         next_path = NULL; // Restablece next_path
-        update_file_manager_view(window);
+        update_file_manager_view(scroll_window, window);
     } else {
         g_print("No next path to navigate to.\n");
     }
@@ -131,11 +152,12 @@ static void on_forward_clicked(GtkButton *button, gpointer user_data) {
 
 static void on_home_clicked(GtkButton *button, gpointer user_data) {
     GtkWidget *window = GTK_WIDGET(user_data);
+    GtkWidget *scroll_window = g_object_get_data(G_OBJECT(window), "scroll_window");
 
     g_print("Home button clicked\n");
     g_free(previous_path);
     previous_path = g_strdup(current_path);
     g_free(current_path);
     current_path = g_strdup(g_get_home_dir());
-    update_file_manager_view(window);
+    update_file_manager_view(scroll_window, window);
 }
