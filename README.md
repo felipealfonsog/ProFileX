@@ -52,7 +52,7 @@ gcc `pkg-config --cflags gtk+-3.0` -o profilex src/main.c src/file_manager.c `pk
 
 
 <p align="center">
-  <img src="./images/sshot-v0.0.5.png" alt="Screenshot Linux" width="400" height="350">
+  <img src="./images/sshot-v0.0.6.png" alt="Screenshot Linux" width="400" height="350">
 </p>
 
 <sub>* This project is still under development. Future updates may include changes to the GUI, and screenshots may not accurately reflect the final design.</sub>
