@@ -4,6 +4,11 @@ ProFileX is a Linux file management tool with a GTK3-based GUI. It allows users 
 
 ProFileX is an advanced file management tool designed for Linux systems, featuring a user-friendly GTK3-based graphical interface. With ProFileX, users can effortlessly navigate, manipulate, and organize files and directories with ease. The application offers robust functionalities such as file listing, creation, deletion, and seamless navigation through directories. Its intuitive design ensures efficient file operations, catering to both novice and advanced users alike. ProFileX prioritizes simplicity and efficiency, making it an essential tool for anyone seeking a lightweight and powerful file manager on Linux.
 
+> [!WARNING]
+> This project is a dynamic work in progress. Version 1.0.0, the inaugural stable and fully-featured release, 
+> is on the horizon. While it's not yet recommended for daily use due to potential minor inconveniences,
+> we welcome enthusiasts to help uncover and resolve bugs or propose exciting new features. But if you wanna try, you are more than welcome!
+
 # 
 
 [![ProFileX Philosophy](https://img.shields.io/badge/ProFileX-Philosophy-green)](#)
@@ -37,6 +42,20 @@ At its core, ProFileX embodies a philosophy centered around simplicity, minimali
 ```
 gcc `pkg-config --cflags gtk+-3.0` -o profilex src/main.c src/file_manager.c `pkg-config --libs gtk+-3.0`
 ```
+
+#
+
+
+#### Screenshots*
+
+[![View Screenshots](https://img.shields.io/badge/View-Screenshots-yellow)](#)
+
+
+<p align="center">
+  <img src="./images/sshot-v0.0.5.png" alt="Screenshot Linux" width="400" height="350">
+</p>
+
+<sub>* This project is still under development. Future updates may include changes to the GUI, and screenshots may not accurately reflect the final design.</sub>
 
 #
 
