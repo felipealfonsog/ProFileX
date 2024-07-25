@@ -1,6 +1,6 @@
 ### ProFileX [(Experimental Project)](#important-experimental-project)* 
 ##### - Under development -
-ProFileX is a Linux file management tool with a Qt-based GUI. It allows users to list, create, and delete files easily, providing an intuitive interface for efficient file operations.
+ProFileX is a Linux file management tool with a GTK3-based GUI. It allows users to list, create, and delete files easily, providing an intuitive interface for efficient file operations.
 
 ProFileX is an advanced file management tool designed for Linux systems, featuring a user-friendly Qt-based graphical interface. With ProFileX, users can effortlessly navigate, manipulate, and organize files and directories with ease. The application offers robust functionalities such as file listing, creation, deletion, and seamless navigation through directories. Its intuitive design ensures efficient file operations, catering to both novice and advanced users alike. ProFileX prioritizes simplicity and efficiency, making it an essential tool for anyone seeking a lightweight and powerful file manager on Linux.
 
@@ -32,7 +32,13 @@ At its core, ProFileX embodies a philosophy centered around simplicity, minimali
 
 #
 
+#### Compile
 
+```
+gcc `pkg-config --cflags gtk+-3.0` -o profilex src/main.c src/file_manager.c `pkg-config --libs gtk+-3.0`
+```
+
+#
 
 #### Installation
 #### Via AUR using YAY
