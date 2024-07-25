@@ -1,56 +1,68 @@
 #!/bin/bash
 
-# Installer for ProFileX on Linux systems
+# Maintainer: Felipe Alfonso Gonzalez <f.alfonso@res-ear.ch>
+# Version: 0.0.5
+# Description: ProFileX is a Linux file management tool with a GTK3-based GUI.
+# License: BSD-3-Clause
+# URL: https://github.com/felipealfonsog/ProFileX
+# Dependencies: gtk3, gcc
 
-# Define variables
-INSTALL_DIR="/usr/local/bin"
-EXECUTABLE_NAME="proFileX"
-VERSION="0.0.3"  # Define the version
-SOURCE_URL="https://github.com/felipealfonsog/ProFileX/archive/refs/tags/v.${VERSION}.tar.gz"
-TMP_DIR=$(mktemp -d)
-SOURCE_DIR="$TMP_DIR/ProFileX-${VERSION}"
+pkgname=profilex
+pkgver=0.0.5
+pkgrel=1
+pkgdesc="ProFileX is a Linux file management tool with a GTK3-based GUI."
+arch=('x86_64')
+url="https://github.com/felipealfonsog/ProFileX"
+license=('BSD-3-Clause')
+depends=('gtk3' 'gcc')
+source=("https://github.com/felipealfonsog/ProFileX/archive/refs/tags/v.${pkgver}.tar.gz")
+sha256sums=('7d6039c99c57dbf40f0c586f870f0951cb21a3d64d58ed2cb58576a65ca71864')
 
-# Function to display error and exit
-error_exit() {
-    echo "Error: $1"
-    rm -rf "$TMP_DIR"
-    exit 1
+# Print credits and information
+echo "************************************************************"
+echo "* Welcome to the installation of ProFileX                 *"
+echo "* Maintained by: Felipe Alfonso Gonzalez <f.alfonso@res-ear.ch> *"
+echo "* Version: ${pkgver}                                     *"
+echo "* Description: ${pkgdesc}                               *"
+echo "* License: ${license[0]}                                *"
+echo "* More info: ${url}                                    *"
+echo "* Dependencies: ${depends[@]}                            *"
+echo "************************************************************"
+echo ""
+
+# Prepare environment
+prepare() {
+  echo "Preparing build environment..."
+  mkdir -p "$srcdir"
+  wget -O "${srcdir}/v.${pkgver}.tar.gz" "${source[0]}"
+  tar xf "${srcdir}/v.${pkgver}.tar.gz" -C "$srcdir" --strip-components=1
 }
 
-# Download source archive
-echo "Downloading ProFileX source code..."
-wget -q --show-progress -O "$TMP_DIR/proFileX.tar.gz" "$SOURCE_URL" || error_exit "Failed to download ProFileX source code."
+# Build the package
+build() {
+  echo "Building package..."
+  cd "${srcdir}/ProFileX-v.${pkgver}"
+  gcc $(pkg-config --cflags gtk+-3.0) -o profilex src/main.c src/file_manager.c $(pkg-config --libs gtk+-3.0)
+}
 
-# Extract source archive
-echo "Extracting source code..."
-tar -xf "$TMP_DIR/proFileX.tar.gz" -C "$TMP_DIR" || error_exit "Failed to extract source code."
+# Install the package
+package() {
+  echo "Installing package..."
+  cd "${srcdir}/ProFileX-v.${pkgver}"
 
-# Build ProFileX
-echo "Building ProFileX..."
-cd "$SOURCE_DIR" || error_exit "Source directory not found."
-qmake proFileX.pro || error_exit "Failed to run qmake."
-make || error_exit "Failed to build ProFileX."
+  # Install the binary to /usr/local/bin
+  install -Dm755 profilex "${pkgdir}/usr/local/bin/profilex"
 
-# Install ProFileX executable
-echo "Installing ProFileX to $INSTALL_DIR..."
-sudo install -m 755 "$SOURCE_DIR/build/proFileX" "$INSTALL_DIR" || error_exit "Failed to install ProFileX."
+  # Install the icon
+  install -Dm644 "${srcdir}/ProFileX-v.${pkgver}/src/profilex-iconlogo.png" "${pkgdir}/usr/share/pixmaps/profilex.png"
 
-# Create desktop entry
-echo "Creating desktop entry..."
-sudo mkdir -p /usr/share/applications
-sudo tee /usr/share/applications/proFileX.desktop > /dev/null <<EOT
-[Desktop Entry]
-Version=1.0
-Type=Application
-Name=ProFileX
-Comment=A Linux file management tool with a Qt-based GUI
-Exec=$EXECUTABLE_NAME
-Icon=applications-utilities
-Terminal=false
-Categories=Utility;
-EOT
+  # Install the .desktop file
+  install -Dm644 "${srcdir}/ProFileX-v.${pkgver}/src/profilex.desktop" "${pkgdir}/usr/share/applications/profilex.desktop"
+}
 
-# Clean up
-rm -rf "$TMP_DIR"
+# Execute the functions
+prepare
+build
+package
 
-echo "ProFileX v.${VERSION} has been successfully installed to $INSTALL_DIR."
+echo "Installation complete!"
