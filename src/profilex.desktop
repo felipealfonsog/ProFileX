@@ -1,0 +1,9 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=ProFileX
+Comment=ProFileX - File Manager
+Exec=profilex
+Icon=profilex
+Terminal=false
+Categories=Utility;System;
